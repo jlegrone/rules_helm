@@ -113,6 +113,8 @@ NAMESPACE=\$${EXPLICIT_NAMESPACE:-\$$NAMESPACE}
 export NS=\$${NAMESPACE:-\$${BUILD_USER}}
 if [ "\$$1" == "upgrade" ]; then
     helm tiller run \$$NS -- helm \$$@ --namespace \$$NS """ + release_name + " " + set_params + " " + values_param + """ \$$CHARTLOC 
+elif [ "\$$1" == "template" ]; then
+    helm tiller run \$$NS -- helm \$$@ --namespace \$$NS --name """ + release_name + " " + set_params + " " + values_param + """ \$$CHARTLOC 
 elif [ "\$$1" == "test" ]; then
     helm tiller run \$$NS -- helm test --cleanup """ + release_name + """
 else
@@ -123,6 +125,7 @@ EOF""",
     )
     _helm_cmd("install", ["upgrade", "--install"], name, helm_cmd_name, values_yaml, values)
     _helm_cmd("install.wait", ["upgrade", "--install", "--wait"], name, helm_cmd_name, values_yaml, values)
+    _helm_cmd("template", ["template"], name, helm_cmd_name, values_yaml, values)
     _helm_cmd("status", ["status"], name, helm_cmd_name)
     _helm_cmd("delete", ["delete", "--purge"], name, helm_cmd_name)
     _helm_cmd("test", ["test", "--cleanup"], name, helm_cmd_name)
